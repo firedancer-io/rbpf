@@ -168,8 +168,14 @@ impl<'a, 'b, C: ContextObject> Interpreter<'a, 'b, C> {
         let dst = insn.dst as usize;
         let src = insn.src as usize;
 
+        /* We now pass in the CU tracking to the Agave runtime by copying the
+           registers along with the pending CUs in a new array. */
         if config.enable_instruction_tracing {
-            self.vm.context_object_pointer.trace(self.reg);
+            let mut reg_cus = [0; 14];
+            reg_cus[0..12].copy_from_slice(&self.reg);
+            reg_cus[12] = self.vm.due_insn_count;
+            reg_cus[13] = self.vm.context_object_pointer.get_remaining() - self.vm.due_insn_count;
+            self.vm.context_object_pointer.trace(reg_cus);
         }
 
         match insn.opc {

@@ -14,7 +14,7 @@ use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 /// Register state recorded after executing one instruction
 ///
 /// The last register is the program counter (aka pc).
-pub type TraceLogEntry = [u64; 12];
+pub type TraceLogEntry = [u64; 14];
 
 /// Used for topological sort
 #[derive(PartialEq, Eq, Debug)]
@@ -486,13 +486,16 @@ impl<'a> Analysis<'a> {
         for (index, entry) in trace_log.iter().enumerate() {
             let pc = entry[11] as usize;
             let insn = &self.instructions[pc_to_insn_index[pc]];
+            /* Currently the value of the due instruction count is not used but
+               can be added to the tracing if it's useful... */
             writeln!(
                 output,
-                "{:5?} {:016X?} {:5?}: {}",
+                "{:5?} {:016X?} {:5?}: {} {}",
                 index,
                 &entry[0..11],
                 pc,
                 self.disassemble_instruction(insn),
+                &entry[13]
             )?;
         }
         Ok(())

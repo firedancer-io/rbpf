@@ -131,7 +131,7 @@ impl<C: ContextObject> Executable<C> {
 /// Runtime context
 pub trait ContextObject {
     /// Called for every instruction executed when tracing is enabled
-    fn trace(&mut self, state: [u64; 12]);
+    fn trace(&mut self, state: [u64; 14]);
     /// Consume instructions from meter
     fn consume(&mut self, amount: u64);
     /// Get the number of remaining instructions allowed
@@ -148,7 +148,7 @@ pub struct TestContextObject {
 }
 
 impl ContextObject for TestContextObject {
-    fn trace(&mut self, state: [u64; 12]) {
+    fn trace(&mut self, state: [u64; 14]) {
         self.trace_log.push(state);
     }
 
